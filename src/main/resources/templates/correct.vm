@@ -1,0 +1,33 @@
+<html>
+	<head>
+    <meta name="decorator" content="atl.general"/>
+  	<title>Request correction of myGengo translation job #$action.getJob().getJobId()</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+
+		<form name="mygengo-correct" action="docorrect.action" method="post" class='aui'>
+			#form_xsrfToken
+
+			<h2>Request</h2>
+			<fieldset>
+				<legend><span>Request</span></fieldset>
+				<div class="field-group">
+					<label for='comment'>Comment</label>
+					<textarea class='textarea long-field' name='comment' id='comment' rows='10' title='Comment'></textarea>
+					<div class='description'>Use this space to make a formal correction request.</div>
+				</div>
+
+				<input type='hidden' value='$job.getJobId()' name='jid' />
+
+				<div class="buttons-container">
+			  	<div class="buttons">
+     				<input class="button submit" type="submit" value="Submit"/>
+	  			</div>
+				</div>
+				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			</fieldset>
+		</form>
+	</body>
+</html>

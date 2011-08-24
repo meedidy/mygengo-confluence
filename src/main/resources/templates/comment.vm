@@ -1,0 +1,44 @@
+<html>
+	<head>
+    <meta name="decorator" content="atl.general"/>
+		<title>Comment thread of job #$action.getJob().getJobId()</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+
+			#foreach($cmnt in $action.getJob().getThread())
+				<table style="width: 45em; border: solid gray 1px; margin: 0.4em; padding: 0.4em #if($cmnt.getNew())background: #00dddd;#end">
+					<tr><td>$cmnt.getBody()</td></tr>
+					<tr><td><span style="float: right;">$cmnt.getCtime() | $cmnt.getAuthor().substring(0,1).toUpperCase()$cmnt.getAuthor().substring(1)</span></td></tr>
+				</table>
+			#end
+
+		<form name="mygengo-comment" action="docomment.action" method="post" class="aui">
+			#form_xsrfToken
+
+			<h2>New comment</h2>
+			<fieldset>
+				<legend><span>New Comment</span></legend>
+				<p>
+					<em>Submits a new comment to the job's comment thread.</em>
+				</p>
+	
+				<div class='field-group'>
+					<label for='comment'>Body</label>
+					<textarea class='textarea long-field' name="comment" rows="6"></textarea>
+					<div class='description'>Please bear in mind that it is prohibited by myGengo's terms of service to solicit contact details from a myGengo translator.</div>
+				</div>
+
+				<input type="hidden" value="$action.getJob().getJobId()" name="jid" />
+				
+				<div class="buttons-container">
+			  	<div class="buttons">
+     				<input class="button submit" type="submit" value="Submit"/>
+	  			</div>
+				</div>
+				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			</fieldset>
+		</form>
+	</body>
+</html>

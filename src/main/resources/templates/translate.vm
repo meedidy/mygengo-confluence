@@ -1,0 +1,184 @@
+<html>
+	<head>
+    <meta name="decorator" content="atl.general"/>
+		#requireResource("com.mygengo.confluence.mygengo:resources-js")
+		#requireResource("confluence.web.resources:jquery")
+		<title>Submit wiki page for translation</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+		<script type="text/javascript">
+			myGengo = {};
+			myGengo.languages = ${action.getLanguages()};
+			myGengo.selected = {};
+			myGengo.current = {};
+			myGengo.default_lang = '$action.getDefaultLang()';
+
+			AJS.$(document).ready(function() 
+			{
+				AJS.$("#finish").click(function() 
+				{
+					var popup = new AJS.Dialog({
+						width:400, 
+						height:300, 
+						id:"dialog", 
+						closeOnOutsideClick: true
+					});
+
+					popup.addPage()
+					popup.addHeader("Confirm translation job","title-class");
+					popup.addPanel("panel-1","<br /><br /><br /><br /><p style='text-align: center;'>Requesting final quote...</p>");
+					popup.addButtonPanel();
+					popup.addSubmit("Submit",function() { AJS.$('#mygengo-translate')[0].submit(); });
+					popup.addButton("Back",function() { popup.hide(); });
+
+	        popup.show();
+
+					var data = {};
+					data.targets = AJS.$('#tgt-json')[0].value;
+					data.content = AJS.$('#body')[0].value;
+					data.lang = myGengo.current.lc;
+
+					jQuery.ajax({
+						url: "../plugins/servlet/quote",
+						type: "POST",
+						data: data,
+						success: function(msg) 
+						{ 
+							var a  = popup.getCurrentPanel();
+							a.body[0].innerHTML = msg;
+						}
+					});
+				});
+			});
+		</script>
+		<noscript>
+			<div class="aui-message error">
+				This form requires JavaScript in order to work.
+			</div>
+		</noscript>
+
+
+
+		<form name="mygengo-translate" id="mygengo-translate" action="dotranslate.action" method="post" class="aui">
+			#form_xsrfToken
+
+			<h2>Content</h2>
+			<fieldset>
+				<legend><span>Content</span></legend>
+				<p>
+					<em>Attributes of the job you submit to myGengo. Correct or extend if necessary.</em>
+				</p>
+
+				<div class="field-group">
+					<label for='slug'>Summary</label>
+					<input type='text' name='slug' id='slug' value='$action.getSlug()' class='text long-field' title='Summary' />
+					<div class="description">Descriptive summary of the job.</div>
+				</div>
+
+				<div class="field-group">
+					<label for='body'>Body</label>
+					<textarea id='body' name='body' title='Body' rows='12' class='textarea long-field'>$action.getBody()</textarea>
+					<div class="description">Content to be translated. You can wrap text within triple square brackets [[[like this]]] to indicate that it does not need to be translated.</div>
+				</div>
+
+				<div class="field-group">
+					<label for='src-lang'>Source language</label>
+					<select id='src-lang' name='src-lang' title='Source language' class='select'></select>
+					<div class="description">Language of the body.</div>
+				</div>
+			</fieldset>
+
+			<h2>Target languages</h2>
+			<fieldset>
+				<legend><span>Target languages</span></legend>
+				<p>
+					<em>Languages to translate to. Every language/tier pair will be handled as a separate translation job.</em>
+				</p>
+
+				<div class="field-group">
+					<table name="tgt-tbl" id="tgt-tbl" class="grid" width="600">
+						<thead>
+							<tr><th>Language</th><th>Tier</th><th>Cost/unit</th><th>Command</th></tr>
+						</thead>
+						<tbody><tr id="tgt-tbl-filler"><td colspan="4" align="center">None</td></tr></tbody>
+					</table>
+					<div class="description">Selected language/tier pairs to translate to.</div>
+				</div>
+				<div style='font-size: 15px;'>Complete cost is <b>~<span id='price'>0.00</span></b>&nbsp;credits</div>
+	
+				<h3>Add new</h3>
+				<fieldset class='inline'>
+					<legend><span>Add new</span></legend>
+					<p>
+						<em>Use the menu below to add target languages to your job.</em>
+					</p>
+					<div class='field-group'>
+						<label for='tgt-lang'>Target language</label>
+						<select id='tgt-lang' name='tgt-lang' title='Language' class='select'></select>
+						<div class="description">Language to translate to.</div>
+					</div>
+
+					<fieldset class="group">
+						<legend><span>Tier</span></legend>
+					  <div class="radio">
+					 	  <input class="radio" type="radio" id="tier-standard" value='standard' name="tier" checked="checked"/>
+				  	 	<label for="std">Standard</label>
+					  </div>
+						<div class="radio">
+							<input class="radio" type="radio" id="tier-pro" value='pro' name="tier"/>
+							<label for="pro">Pro</label>
+						</div>
+						<div class="radio">
+							<input class="radio" type="radio" id="tier-ultra" value='ultra' name="tier"/>
+							<label for="ultra">Ultra</label>
+						</div>
+						<div class='field-group'>
+							<div class="description">Quality level. See myGengos <a href="http://mygengo.com/contact-support/quality-policy/">Quality policy</a> for details.</div>
+						</div>
+					</fieldset>
+
+					<div class='field-group'>
+						<input type='button' id="add-lang" class='button' value='Add language'/>
+					</div>
+				</fieldset>
+			</fieldset>
+
+			<h2>Optional</h2>
+			<fieldset>
+				<legend><span>Optional</span></legend>
+				<div class="field-group">
+					<label for='comment'>Comment</label>
+					<textarea id='comment' name='comment' title='Comment' rows='6' class='textarea long-field'></textarea>
+					<div class="description">MyGengo recommends you do add comments to all jobs to give context and direction to the translator. Jobs that have comments are usually picked up and translated more quickly than those that don't.</div>
+				</div>
+
+				<fieldset class="group">
+				  <legend><span>Auto approve</span></legend>
+				  <div class="checkbox">
+			  	  <input class="checkbox" type="checkbox" id="auto-appr" name="auto-appr"/>
+						<label for="auto-appr">Auto approve</label>
+				  </div>
+					<div class='field-group'>
+						<div class="description">This will instantly approve jobs when they are submitted.</div>
+					</div>
+				</fieldset>
+			</fieldset>
+
+			<input type='hidden' name='tgt-json' id='tgt-json' value='{}'/>
+
+			<p>
+				Before submitting please see myGengos <a href="http://mygengo.com/contact-support/quality-policy/">Quality policy</a>.
+			</p>
+
+			<div class="buttons-container">
+			  <div class="buttons">
+     			<input class="button" id='finish' type="button" value="Finish"/>
+			    <a href="${req.contextPath}/mygengo/manage.action">Cancel</a>
+  			</div>
+			</div>
+			<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+		</form>
+	</body>
+</html>

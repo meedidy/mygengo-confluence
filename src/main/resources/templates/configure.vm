@@ -1,0 +1,44 @@
+<html>
+	<head>
+    <meta name="decorator" content="atl.admin"/>
+		<title>myGengo plugin configuration</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+
+		<br/>
+		<strong>Credidentials from myGengo to access the web API:</strong>
+		<br/>
+		<br/>
+
+		<form name="mygengo-settings" action="saveconfigure.action" class='aui'>
+			#form_xsrfToken
+
+			<h2>Credidentials</h2>
+			<fieldset>
+				<legend><span>Credidentials</span></legend>
+				<p>
+					<em>API users must have a registered myGengo account to acquire a pair of keys - a public key, or token, and private key. The combination effectively functions as a username and password.</em>
+				</p>
+
+				<div class='field-group'>
+					<label for='apikey'>Public key</label>
+					<input type='text' name='apikey' id='apikey' value='$action.getCredentials().getApiKey()' class='text long-field' title='Public key' />
+				</div>
+
+				<div class='field-group'>
+					<label for='privkey'>Private key</label>
+					<input type='text' name='privkey' id='privkey' value='$action.getCredentials().getPrivKey()' class='text long-field' title='Private key' />
+				</div>
+
+				<div class="buttons-container">
+			  	<div class="buttons">
+     				<input class="button submit" type="submit" value="Save"/>
+	  			</div>
+				</div>
+				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			</fieldset>
+		</form>
+	</body>
+</html>

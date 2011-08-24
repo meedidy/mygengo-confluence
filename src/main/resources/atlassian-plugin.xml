@@ -1,0 +1,216 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="Meedidy the 3rd" url="mailto:meedidy@googlemail.com" />
+		<param name="configure.url">/admin/plugins/mygengo/configure.action</param>
+	</plugin-info>
+
+	<!-- javascript for translate.vm -->
+	<web-resource key="resources-js">
+    <resource type="download" name="translate.js" location="js/translate.js"/>
+	</web-resource>
+
+	<!-- i18n -->
+	<resource type="i18n" name="i18n" location="message" />
+
+	<!-- manage jobs and comment threads in the local database -->
+	<component class="com.mygengo.confluence.BandanaDatabase" key="job-database">
+		<interface>com.mygengo.confluence.Database</interface>
+	</component>
+
+	<!-- send requests to remote myGengo servers -->
+	<component class="com.mygengo.confluence.MyGengoTranslationService" key="translation-service">
+		<interface>com.mygengo.confluence.TranslationService</interface>
+	</component>
+
+	<!-- dashboard macro -->
+	<macro name="mygengo-dashboard" class="com.mygengo.confluence.Dashboard" key="dashboard-macro">
+		<description>Renders a overview of all running translation jobs.</description>
+	</macro>
+
+	<!-- manage link on the Dashboard -->
+	<web-item key="dashboard-item" name="dashboard-item" section="system.dashboard" weight="40">
+		<description>Manage myGengo jobs' link on the Dashboard.</description>
+		<label key="mygengo.dashboard.label" />
+		<link>/mygengo/manage.action</link>
+		<tooltip key="mygengo.dashboard.tooltip" />
+
+		<!-- broken: http://jira.atlassian.com/browse/CONF-22064 -->
+		<icon height="16" width="16">
+			<link>/images/icons/print.gif</link>
+		</icon>
+	</web-item>
+
+	<!-- translate link in the menu -->
+	<web-item key="translate-item" name="translate-item" section="system.content.action" weight="40">
+		<description>'Translate with myGengo' link in the menu.</description>
+		<label key="mygengo.translate.label" />
+		<link>/mygengo/translate.action?page=$page.id</link>
+
+		<condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition" />
+	</web-item>
+
+	<!-- configuration form -->
+	<xwork name="configure-action" key="configure-action">
+		<description>Configure the myGengo plugin.</description>
+		<package name="configure-action" extends="default" namespace="/admin/plugins/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+ 
+			<action name="configure" class="com.mygengo.confluence.ConfigureAction" method="doView">
+				<result name="success" type="velocity">/templates/configure.vm</result>
+			</action>
+ 
+			<action name="saveconfigure" class="com.mygengo.confluence.ConfigureAction" method="doSave">
+				<result name="success" type="velocity">/templates/configure.vm</result>
+				<result name="error" type="velocity">/templates/configure.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- manage jobs -->
+	<xwork name="manage-action" key="manage-action">
+		<description>Cancel, approve and (re)view translation jobs.</description>
+		<package name="manage-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+ 		
+			<action name="manage" class="com.mygengo.confluence.ManageAction" method="execute">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- cancel job -->
+	<xwork name="cancel-action" key="cancel-action">
+		<description>Cancel a avaliable translation job.</description>
+		<package name="cancel-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="cancel" class="com.mygengo.confluence.CancelAction" method="execute">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- view/publish job -->
+	<xwork name="view-action" key="view-action">
+		<description>View a completed job and publish it Cancel, approve and (re)view translation jobs.</description>
+		<package name="view-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="view" class="com.mygengo.confluence.ViewAction" method="execute">
+				<result name="success" type="velocity">/templates/view.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+
+			<action name="publish" class="com.mygengo.confluence.ViewAction" method="publish">
+				<result name="success" type="velocity">/templates/view.vm</result>
+				<result name="error" type="velocity">/templates/view.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- submit page for translation -->
+	<xwork name="translate-action" key="translate-action">
+		<description>Prepare a wiki page for tanslation.</description>
+		<package name="translate-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="translate" class="com.mygengo.confluence.TranslateAction" method="execute">
+				<result name="success" type="velocity">/templates/translate.vm</result>
+				<result name="error" type="velocity">/templates/translate.vm</result>
+			</action>
+
+			<action name="dotranslate" class="com.mygengo.confluence.TranslateAction" method="submit">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+				<result name="error" type="velocity">/templates/translate.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- get a quote -->
+	<servlet name="quote-servlet" key="quote-servlet" class="com.mygengo.confluence.QuoteServlet">
+		<description>Return a quote for a POST'ed content and list of target languguage.</description>
+   	<url-pattern>/quote</url-pattern>
+	</servlet>
+
+	<!-- view and submit comments -->
+	<xwork name="comment-action" key="comment-action">
+		<description>View and submit comments.</description>
+		<package name="comment-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="comment" class="com.mygengo.confluence.CommentAction" method="execute">
+				<result name="success" type="velocity">/templates/comment.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+
+			<action name="docomment" class="com.mygengo.confluence.CommentAction" method="submit">
+				<result name="success" type="velocity">/templates/comment.vm</result>
+				<result name="error" type="velocity">/templates/comment.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- recv async status updates and comments -->
+	<servlet name="callback-servlet" key="callback-servlet" class="com.mygengo.confluence.CallbackServlet">
+		<description>Recive asynchronous updates from myGengo.</description>
+   	<url-pattern>/callback</url-pattern>
+	</servlet>
+
+	<!-- review job -->
+	<xwork name="review-action" key="review-action">
+		<description>Review a finished translation job.</description>
+		<package name="review-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="review" class="com.mygengo.confluence.ReviewAction" method="execute">
+				<result name="success" type="velocity">/templates/review.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+
+			<action name="doreview" class="com.mygengo.confluence.ReviewAction" method="submit">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+				<result name="error" type="velocity">/templates/review.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- correct job -->
+	<xwork name="correct-action" key="correct-action">
+		<description>Make a correction request of a finished translation job.</description>
+		<package name="correct-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="correct" class="com.mygengo.confluence.CorrectAction" method="execute">
+				<result name="success" type="velocity">/templates/correct.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+
+			<action name="docorrect" class="com.mygengo.confluence.CorrectAction" method="submit">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+				<result name="error" type="velocity">/templates/correct.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+	<!-- reject job -->
+	<xwork name="reject-action" key="reject-action">
+		<description>Reject a translation job.</description>
+		<package name="reject-action" extends="default" namespace="/mygengo">
+			<default-interceptor-ref name="defaultStack" />
+
+			<action name="reject" class="com.mygengo.confluence.RejectAction" method="execute">
+				<result name="success" type="velocity">/templates/reject.vm</result>
+				<result name="error" type="velocity">/templates/manage.vm</result>
+			</action>
+
+			<action name="doreject" class="com.mygengo.confluence.RejectAction" method="submit">
+				<result name="success" type="velocity">/templates/manage.vm</result>
+				<result name="error" type="velocity">/templates/reject.vm</result>
+			</action>
+		</package>
+	</xwork>
+
+</atlassian-plugin>

@@ -1,0 +1,120 @@
+#set ($job = $action.getJob())
+#set ($feedback = $action.getFeedback())
+
+<html>
+	<head>
+    <meta name="decorator" content="atl.general"/>
+  	<title>View myGengo translation job #$job.getJobId()</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+		
+		<form name="mygengo-publish" action="${req.contextPath}/mygengo/publish.action" class='aui'>
+			#form_xsrfToken
+			
+			<h2>Completed job</h2>
+			<fieldset>
+				<legend><span>Completed job</span></legend>
+				<p>
+					<em>Summary of the approved translation job and your feedback.</em>
+				</p>
+
+				<div class="field-group">
+					<label>Original text</label>
+					<textarea rows='12' style="border: 1px solid #DDDDDD; background: rgba(0,0,0,0);" class='textarea long-field' disabled="disabled">$job.getBodySrc()</textarea>
+	<!--				<span class="field-value">
+						<pre>$job.getBodySrc()</pre>
+					</span>-->
+		  		<div class="description">Body of the submitted job.</div>	
+				</div>
+
+				<div class="field-group">
+					<label>Translation</label>
+					<textarea rows='12' style="border: 1px solid #DDDDDD; background: rgba(0,0,0,0);" class='textarea long-field' disabled="disabled">$job.getBodyTgt()</textarea>
+<!--					<span class="field-value">
+						<pre>$job.getBodyTgt()</pre>
+					</span>-->
+		  		<div class="description">Approved translation.</div>	
+				</div>
+
+				<div class="field-group">
+					<label>Rating</label>
+					<span class="field-value">
+						$feedback.getRating()
+					</span>
+		  		<div class="description">Rating of the translation job.</div>	
+				</div>
+
+				<!--
+				<fieldset class="group">
+					<legend><span>Rating</span></legend>
+					<div class="radio">
+						<input class="radio" type="radio" id="rating-1" value='1' name="rating" disabled='disabled' #if($feedback.getRating() == 1) checked='checked' #end />
+					 	<label for="rating-1">1 Poor</label>
+					</div>
+					<div class="radio">
+						<input class="radio" type="radio" id="rating-2" value='2' name="rating" disabled='disabled' #if($feedback.getRating() == 2) checked='checked' #end />
+					 	<label for="rating-2">2</label>
+					</div>
+					<div class="radio">
+						<input class="radio" type="radio" id="rating-3" value='3' name="rating" disabled='disabled' #if($feedback.getRating() == 3) checked='checked' #end />
+					 	<label for="rating-3">3</label>
+					</div>
+					<div class="radio">
+						<input class="radio" type="radio" id="rating-4" value='4' name="rating" disabled='disabled' #if($feedback.getRating() == 4) checked='checked' #end />
+					 	<label for="rating-4">4</label>
+					</div>
+					<div class="radio">
+						<input class="radio" type="radio" id="rating-5" value='5' name="rating" disabled='disabled' #if($feedback.getRating() == 5) checked='checked' #end />
+				 		<label for="rating-5">5 Great</label>
+					</div>
+					<div class='field-group'>
+						<div class="description">Rating of the translation job.</div>
+					</div>
+				</fieldset>
+				-->
+
+				<div class="field-group">
+					<label>Comment</label>
+					<textarea rows='6' style="border: 1px solid #DDDDDD; background: rgba(0,0,0,0);" class='textarea long-field' disabled="disabled">$feedback.getForTrans()</textarea>
+<!--					<span class="field-value">
+						<pre>$feedback.getForTrans()</pre>
+					</span>-->
+		  		<div class="description">Comment for the translator.</div>	
+				</div>
+			</fieldset>
+
+			<h2>Publish</h2>
+			<fieldset>
+				<legend><span>Publish</span></legend>
+				<p>
+					<em>Publish the translated body as a new article on the wiki.</em>
+				</p>
+
+				<div class="field-group">
+					<label for='space'>Space</label>
+					<select class='select' id='space' name='space' />
+						#foreach($space in $action.getSpaces()) <option value="$space.getKey()">$space.getName()</option> #end
+					</select>
+		  		<div class="description">Space of the new article.</div>	
+				</div>
+
+				<div class='field-group'>
+					<label for='title'>Title</label>
+					<input type='text' name='title' id='title' value='' class='text long-field' title='Title' />
+					<div class='description'>Title of the new article.</div>
+				</div>
+
+				<input type='hidden' id='jid' name='jid' value='$job.getJobId()' />
+				
+				<div class="buttons-container">
+			  	<div class="buttons">
+     				<input class="button submit" type="submit" value="Publish"/>
+	  			</div>
+				</div>
+				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			</fieldset>
+		</form>
+	</body>
+</html>

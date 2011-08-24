@@ -1,0 +1,79 @@
+<html>
+	<head>
+    <meta name="decorator" content="atl.general"/>
+  	<title>Reject myGengo translation job #$action.getJob().getJobId()</title>
+	</head>
+	<body>
+  	#parse ( "/template/includes/actionmessages.vm" )
+		#parse ( "/template/includes/actionerrors.vm" )
+
+		<form name="mygengo-reject" action="doreject.action" method="post" class='aui'>
+			#form_xsrfToken
+
+			<h2>Reject</h2>
+			<fieldset>
+				<legend><span>Reject</span></legend>
+				<p>
+					<em>Please use rejections sparingly, and only as a last resort.<br/>If you're not happy with a translation, you can reject and cancel the job. However, before you receive your full refund, the myGengo Quality Control team will review your request and determine whether or not it was a fair rejection. You also have the option to pass the translation along to another translator if you don't want to cancel the job.<br/>Please try to explain things as calmly as possible.<br/>Please read the <a href='http://mygengo.com/help/faqs' target="_blank">FAQ</a> for more informations.</em>
+				</p>
+
+				<fieldset class="group">
+					<legend><span>Follow up</span></legend>
+				  <div class="radio">
+				 	  <input class="radio" type="radio" id="follow_up-cancel" value='cancel' name="follow_up" checked="checked"/>
+				 	 	<label for="follow_up-cancel">Yes, please cancel and refund me.</label>
+				  </div>
+					<div class="radio">
+				 	  <input class="radio" type="radio" id="follow_up-requeue" value='requeue' name="follow_up"/>
+				 	 	<label for="follow_up-requeue">No, please have another translator finish the job.</label>
+				  </div>
+					<div class='field-group'>
+						<div class="description">Would you like to cancel the translation?</div>
+					</div>
+				</fieldset>
+
+				<fieldset class="group">
+					<legend><span>Reason</span></legend>
+				  <div class="radio">
+				 	  <input class="radio" type="radio" id="reason-quality" value='quality' name="reason" checked="checked"/>
+				 	 	<label for="reason-quality">Poor quality of the translation.</label>
+				  </div>
+					<div class="radio">
+				 	  <input class="radio" type="radio" id="reason-incomplete" value='incomplete' name="reason"/>
+				 	 	<label for="reason-incomplete">Missing or incomplete translation.</label>
+				  </div>
+					<div class="radio">
+				 	  <input class="radio" type="radio" id="reason-other" value='other' name="reason"/>
+				 	 	<label for="reason-other">Other (please describe below)</label>
+				  </div>
+					<div class='field-group'>
+						<div class="description">Rejection reason.</div>
+					</div>
+				</fieldset>
+
+				<div class="field-group">
+					<label for='comment'>Comment</label>
+					<textarea class='textarea long-field' name='comment' id='comment' rows='8' title='Comment'></textarea>
+					<div class='description'>Feedback for original translator.</div>
+				</div>
+
+				<img src='$action.getJob().getCaptchaUrl()' />
+
+				<div class='field-group'>
+					<label for='captcha'>Captcha</label>
+					<input type='text' name='captcha' id='captcha' value='' class='text long-field' title='Captcha' />
+					<div class='description'>Please enter the text above (to confirm you're human)</div>
+				</div>
+
+				<input type='hidden' name='jid' id='jid' value='$job.getJobId()' />
+
+				<div class="buttons-container">
+			  	<div class="buttons">
+     				<input class="button submit" type="submit" value="Reject"/>
+	  			</div>
+				</div>
+				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			</fieldset>
+		</form>
+	</body>
+</html>
