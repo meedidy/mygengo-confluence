@@ -178,7 +178,7 @@
 			    <a href="${req.contextPath}/mygengo/manage.action">Cancel</a>
   			</div>
 			</div>
-			<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+			<span style="float: right;">powered by <a href="http://mygengo.com">myGengo</a></span>
 		</form>
 	</body>
 </html>

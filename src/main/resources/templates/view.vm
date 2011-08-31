@@ -102,7 +102,7 @@
 
 				<div class='field-group'>
 					<label for='title'>Title</label>
-					<input type='text' name='title' id='title' value='' class='text long-field' title='Title' />
+					<input type='text' name='title' id='title' value='$job.getSlug() ($job.getLcTgt().getName())' class='text long-field' title='Title' />
 					<div class='description'>Title of the new article.</div>
 				</div>
 
@@ -113,7 +113,7 @@
      				<input class="button submit" type="submit" value="Publish"/>
 	  			</div>
 				</div>
-				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+				<span style="float: right;">powered by <a href="http://mygengo.com">myGengo</a></span>
 			</fieldset>
 		</form>
 	</body>

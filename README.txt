@@ -21,4 +21,3 @@ lists running and completed translation jobs as well as links to cancel,
 approve, review, comment on and publish jobs depending on their status.
 
 meedidy@googlemail.com
-06/2011

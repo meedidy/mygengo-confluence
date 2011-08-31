@@ -72,7 +72,7 @@
      				<input class="button submit" type="submit" value="Reject"/>
 	  			</div>
 				</div>
-				<span style="float: right;">powered by <a href="mygengo.com">myGengo</a></span>
+				<span style="float: right;">powered by <a href="http://mygengo.com">myGengo</a></span>
 			</fieldset>
 		</form>
 	</body>
