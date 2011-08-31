@@ -19,7 +19,7 @@ import com.atlassian.confluence.json.parser.*;
 class MyGengoTranslationService implements TranslationService
 {
 	private HttpClient mHttpClient;
-	final String HOST = "api.sandbox.mygengo.com";
+	final String HOST = "api.mygengo.com";
 	final String PATH = "/v1/";
 	
 	private class NameValuePairCollator implements Comparator
